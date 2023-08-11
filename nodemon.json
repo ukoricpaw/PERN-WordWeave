@@ -1,0 +1,6 @@
+{
+  "watch": "src",
+  "ignore": ["node_modules", "dist"],
+  "ext": ".ts",
+  "exec": "npx ts-node ./src/index.ts"
+}
