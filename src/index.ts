@@ -11,7 +11,12 @@ import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js'
 const PORT = process.env.PORT || 5000;
 const app = express();
 
-app.use(cors({ credentials: true }));
+app.use(
+  cors({
+    origin: String(process.env.CLIENT_URL),
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api', ownRouter);
