@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import models from './models/models.js';
 import { ownRouter } from './routes/index.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js';
+import { Server } from 'socket.io';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -22,7 +23,6 @@ app.use(express.json());
 app.use('/api', ownRouter);
 app.use(errorHandlerMiddleware);
 const server = http.createServer(app);
-
 const start = async function () {
   console.log(models);
   await sequelize.authenticate();
