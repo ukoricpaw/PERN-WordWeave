@@ -99,6 +99,7 @@ class UserController {
       const users = await userService.getAllUsersWithoutUserThatRequested(userParams);
       res.json(users);
     } catch (err) {
+      console.log(err);
       next(err);
     }
   }

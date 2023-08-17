@@ -61,6 +61,9 @@ class UserRepository {
           [Op.ne]: userParams.userId,
         },
       },
+      attributes: {
+        exclude: ['activationLink', 'password', 'isActivated', 'createdAt', 'updatedAt'],
+      },
       limit: userParams.limit,
       offset: userParams.page * userParams.limit - userParams.limit,
     });
