@@ -1,3 +1,4 @@
+import { FriendContact } from './FriendContact.js';
 import { Message } from './Message.js';
 import { Room } from './Room.js';
 import { RoomMembers } from './RoomMembers.js';
@@ -49,4 +50,21 @@ RoomMembers.belongsTo(Room, {
   foreignKey: 'roomId',
 });
 
-export default { Token, User, Room, RoomMembers, Message };
+User.hasMany(FriendContact, {
+  sourceKey: 'id',
+  foreignKey: 'user1Id',
+});
+User.hasMany(FriendContact, {
+  sourceKey: 'id',
+  foreignKey: 'user2Id',
+});
+
+FriendContact.belongsTo(User, {
+  foreignKey: 'user1Id',
+});
+
+FriendContact.belongsTo(User, {
+  foreignKey: 'user2Id',
+});
+
+export default { Token, User, Room, RoomMembers, Message, FriendContact };
