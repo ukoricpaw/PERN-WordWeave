@@ -38,7 +38,7 @@ User.prototype.getFriends = async function (params: SearchUserParams) {
 
   const friendsIds = friends.map(friend => (friend.user1Id === this.id ? friend.user2Id : friend.user1Id));
 
-  const usersByFriendsIds = await User.findAll({
+  const usersByFriendsIds = await User.findAndCountAll({
     where: {
       email: `%${params.search}%`,
       id: friendsIds,

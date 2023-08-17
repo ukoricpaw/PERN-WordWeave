@@ -1,6 +1,6 @@
 import ApiError from '../error/ApiError.js';
-import { User } from '../models/User.js';
-import { CreateNewUserType } from '../types/userTypes.js';
+import { User, UserInstance } from '../models/User.js';
+import { CreateNewUserType, SearchUserParams } from '../types/userTypes.js';
 import bcrypt from 'bcrypt';
 
 class UserRepository {
@@ -32,7 +32,7 @@ class UserRepository {
 
   async findUserById(id: number) {
     const user = User.findOne({ where: { id } });
-    return user;
+    return user as Promise<UserInstance & { getFriends: (params: SearchUserParams) => Promise<UserInstance[]> }>;
   }
 
   async comparePassword(password: string, hashedPassword: string) {

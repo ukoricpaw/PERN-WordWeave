@@ -6,5 +6,10 @@ import { MiddlewareType, RequestType } from '../types/requestTypes.js';
 const searchRouter = Router();
 
 searchRouter.get('/getusers', checkAuthMiddleware as MiddlewareType, searchController.getAllUsers as RequestType);
+searchRouter.get(
+  '/getfriendcontacts',
+  checkAuthMiddleware as MiddlewareType,
+  searchController.getAllFriends as RequestType,
+);
 
 export default searchRouter;

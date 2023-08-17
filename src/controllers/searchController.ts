@@ -15,6 +15,17 @@ class SearchController {
       next(err);
     }
   }
+
+  async getAllFriends(req: RequestWithUserPayload, res: Response, next: NextFunction) {
+    try {
+      checkUserPayload(req.user);
+      const userParams = createSearchParamsByQuery(req.query, req.user.id);
+      const friends = await searchService.getAllFriendContactsWithoutUser(userParams);
+      res.json(friends);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default new SearchController();
