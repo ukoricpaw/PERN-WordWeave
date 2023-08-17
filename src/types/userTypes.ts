@@ -16,3 +16,11 @@ export interface UserResponseType {
 export interface RequestWithUserPayload extends Request {
   user: UserDto;
 }
+
+
+export type SearchUserParams = {
+  limit: number;
+  page: number;
+  search: string;
+  userId: number;
+}

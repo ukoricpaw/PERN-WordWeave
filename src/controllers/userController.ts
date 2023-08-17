@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import ApiError from '../error/ApiError.js';
 import { validationResult } from 'express-validator';
 import userService from '../services/userService.js';
+import { RequestWithUserPayload, SearchUserParams } from '../types/userTypes.js';
 
 class UserController {
   async registration(req: Request, res: Response, next: NextFunction) {
@@ -78,6 +79,25 @@ class UserController {
       }
       const message = await userService.activateAccoutByLink(link);
       res.json(message);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getAllUsers(req: RequestWithUserPayload, res: Response, next: NextFunction) {
+    try {
+      const { search, page, limit } = req.query;
+      if (!req.user) {
+        throw ApiError.notAuthorized('Нет доступа', null);
+      }
+      const userParams: SearchUserParams = {
+        search: (search as string) || '',
+        page: Number(page) || 1,
+        limit: Number(limit) || 8,
+        userId: req.user.id,
+      };
+      const users = await userService.getAllUsersWithoutUserThatRequested(userParams);
+      res.json(users);
     } catch (err) {
       next(err);
     }
