@@ -1,7 +1,6 @@
-import { Op } from 'sequelize';
 import ApiError from '../error/ApiError.js';
 import { User } from '../models/User.js';
-import { CreateNewUserType, SearchUserParams } from '../types/userTypes.js';
+import { CreateNewUserType } from '../types/userTypes.js';
 import bcrypt from 'bcrypt';
 
 class UserRepository {
@@ -49,25 +48,6 @@ class UserRepository {
       throw ApiError.badRequest('Ошибка запроса', null);
     }
     return user;
-  }
-
-  async getAllUsersExceptRequestedUser(userParams: SearchUserParams) {
-    const users = await User.findAndCountAll({
-      where: {
-        email: {
-          [Op.like]: `%${userParams.search}%`,
-        },
-        id: {
-          [Op.ne]: userParams.userId,
-        },
-      },
-      attributes: {
-        exclude: ['activationLink', 'password', 'isActivated', 'createdAt', 'updatedAt'],
-      },
-      limit: userParams.limit,
-      offset: userParams.page * userParams.limit - userParams.limit,
-    });
-    return users;
   }
 }
 

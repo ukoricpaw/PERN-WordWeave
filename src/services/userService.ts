@@ -5,7 +5,7 @@ import UserDto from '../dtos/userDto.js';
 import tokenService from './tokenService.js';
 import mailService from './mailService.js';
 import { UserInstance } from '../models/User.js';
-import { SearchUserParams, UserResponseType } from '../types/userTypes.js';
+import { UserResponseType } from '../types/userTypes.js';
 import ApiError from '../error/ApiError.js';
 
 class UserService {
@@ -60,11 +60,6 @@ class UserService {
     user.isActivated = true;
     await user.save();
     return { message: 'Аккаунт активирован' };
-  }
-
-  async getAllUsersWithoutUserThatRequested(params: SearchUserParams) {
-    const allUsers = await userRepository.getAllUsersExceptRequestedUser(params);
-    return allUsers;
   }
 }
 
