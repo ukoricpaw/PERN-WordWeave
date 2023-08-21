@@ -19,6 +19,14 @@ class UserRepository {
     return candidate;
   }
 
+  async checkCandidateById(id: number) {
+    const candidate = await User.findOne({ where: { id } });
+    if (!candidate) {
+      throw ApiError.badRequest('Пользователя с таким id не существует', null);
+    }
+    return candidate;
+  }
+
   async createNewUser(user: CreateNewUserType) {
     const newUser = User.create({
       email: user.email,
