@@ -30,21 +30,29 @@ const User = sequelize.define<UserInstance>('user', {
 User.prototype.getFriends = async function (params: SearchUserParams) {
   const friends = await FriendContact.findAll({
     where: {
-      [Op.or]: [{ user1Id: this.id }, { user2Id: this.id }],
+      [Op.or]: [
+        {
+          user1Id: this.id,
+        },
+        { user2Id: this.id },
+      ],
     },
     limit: params.limit,
     offset: params.limit * params.page - params.limit,
   });
-
   const friendsIds = friends.map(friend => (friend.user1Id === this.id ? friend.user2Id : friend.user1Id));
-
-  const usersByFriendsIds = await User.findAndCountAll({
+  const friendContacts = await User.findAndCountAll({
     where: {
-      email: `%${params.search}%`,
+      email: {
+        [Op.like]: `%${params.search}%`,
+      },
       id: friendsIds,
     },
+    attributes: {
+      exclude: ['password', 'isActivated', 'activationLink'],
+    },
   });
-  return usersByFriendsIds;
+  return friendContacts;
 };
 
 export { User };

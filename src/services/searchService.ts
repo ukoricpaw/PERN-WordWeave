@@ -10,7 +10,7 @@ class SearchService {
 
   async getAllFriendContactsWithoutUser(params: SearchUserParams) {
     const requestedUser = await userRepository.findUserById(params.userId);
-    const friends = requestedUser.getFriends(params);
+    const friends = await requestedUser.getFriends(params);
     return friends;
   }
 }
