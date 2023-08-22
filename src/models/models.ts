@@ -4,6 +4,7 @@ import { Room } from './Room.js';
 import { RoomMembers } from './RoomMembers.js';
 import { Token } from './Token.js';
 import { User } from './User.js';
+import { DateCleansing } from './DateCleansing.js';
 
 User.hasOne(Token, {
   foreignKey: 'userId',
@@ -67,4 +68,22 @@ FriendContact.belongsTo(User, {
   foreignKey: 'user2Id',
 });
 
-export default { Token, User, Room, RoomMembers, Message, FriendContact };
+User.hasMany(DateCleansing, {
+  sourceKey: 'id',
+  foreignKey: 'userId',
+});
+
+DateCleansing.belongsTo(User, {
+  foreignKey: 'userId',
+});
+
+Room.hasMany(DateCleansing, {
+  sourceKey: 'id',
+  foreignKey: 'roomId',
+});
+
+DateCleansing.belongsTo(Room, {
+  foreignKey: 'roomId',
+});
+
+export default { Token, User, Room, RoomMembers, Message, FriendContact, DateCleansing };

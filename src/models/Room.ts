@@ -6,6 +6,7 @@ interface RoomAttributes {
   isGroup: boolean;
   avatar: string | null;
   description: string | null;
+  name: string | null;
 }
 
 interface RoomInstance extends Model<RoomAttributes, Optional<RoomAttributes, 'id'>>, RoomAttributes {
@@ -18,4 +19,5 @@ export const Room = sequelize.define<RoomInstance>('room', {
   isGroup: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   avatar: { type: DataTypes.STRING, allowNull: true, defaultValue: null },
   description: { type: DataTypes.TEXT, allowNull: true, defaultValue: null },
+  name: { type: DataTypes.STRING, allowNull: true, defaultValue: null },
 });
