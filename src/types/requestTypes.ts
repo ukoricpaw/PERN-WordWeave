@@ -6,3 +6,6 @@ export type QueryOfRequest = Request['query'];
 export type BodyOfRequest = Request['body'];
 export type CookiesOfRequest = Request['cookies'];
 export type ParamsOfRequest = Request['params'];
+export type MessageType = {
+  message: string;
+};

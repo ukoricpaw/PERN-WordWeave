@@ -1,6 +1,5 @@
-import {Model, Optional, DataTypes} from 'sequelize';
+import { Model, Optional, DataTypes } from 'sequelize';
 import { sequelize } from './index.js';
-
 
 interface DateCleansingAttributes {
   id: number;
@@ -9,16 +8,16 @@ interface DateCleansingAttributes {
   date: Date;
 }
 
-interface DateCleansingInstance extends Model<DateCleansingAttributes, Optional<DateCleansingAttributes, 'id'>>, 
-DateCleansingAttributes {
+interface DateCleansingInstance
+  extends Model<DateCleansingAttributes, Optional<DateCleansingAttributes, 'id'>>,
+    DateCleansingAttributes {
   createdAt?: Date;
-  updatedAt?: Date
+  updatedAt?: Date;
 }
 
-
 export const DateCleansing = sequelize.define<DateCleansingInstance>('date_cleansing', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, allowNull: false, autoIncrement: true},
-  roomId: {type: DataTypes.INTEGER, allowNull: false},
-  userId: {type: DataTypes.INTEGER, allowNull: false},
-  date: {type: DataTypes.DATE, allowNull: false},
-})
+  id: { type: DataTypes.INTEGER, primaryKey: true, allowNull: false, autoIncrement: true },
+  roomId: { type: DataTypes.INTEGER, allowNull: false },
+  userId: { type: DataTypes.INTEGER, allowNull: false },
+  date: { type: DataTypes.DATE, allowNull: false },
+});

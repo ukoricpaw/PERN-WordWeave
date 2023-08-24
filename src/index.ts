@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import models from './models/models.js';
 import { ownRouter } from './routes/index.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js';
-import WebSocketServer from './ws/createServer.js';
+import WebSocketServer from './ws/WebSocketServer.js';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
