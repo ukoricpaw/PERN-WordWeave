@@ -81,6 +81,21 @@ Room.hasMany(DateCleansing, {
   sourceKey: 'id',
   foreignKey: 'roomId',
 });
+User.hasMany(Room, {
+  sourceKey: 'id',
+  foreignKey: 'user1Id',
+});
+User.hasMany(Room, {
+  sourceKey: 'id',
+  foreignKey: 'user2Id',
+});
+
+Room.belongsTo(User, {
+  foreignKey: 'user1Id',
+});
+Room.belongsTo(User, {
+  foreignKey: 'user2Id',
+});
 
 DateCleansing.belongsTo(Room, {
   foreignKey: 'roomId',

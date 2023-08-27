@@ -7,6 +7,8 @@ interface RoomAttributes {
   avatar: string | null;
   description: string | null;
   name: string | null;
+  user1Id: number;
+  user2Id: number;
 }
 
 interface RoomInstance extends Model<RoomAttributes, Optional<RoomAttributes, 'id'>>, RoomAttributes {
@@ -20,4 +22,6 @@ export const Room = sequelize.define<RoomInstance>('room', {
   avatar: { type: DataTypes.STRING, allowNull: true, defaultValue: null },
   description: { type: DataTypes.TEXT, allowNull: true, defaultValue: null },
   name: { type: DataTypes.STRING, allowNull: true, defaultValue: null },
+  user1Id: { type: DataTypes.INTEGER, allowNull: false },
+  user2Id: { type: DataTypes.INTEGER, allowNull: false },
 });

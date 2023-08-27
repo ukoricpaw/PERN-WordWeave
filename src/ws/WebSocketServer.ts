@@ -4,8 +4,13 @@ import { onEventsHandlers } from './onEvents.ts/index.js';
 import tokenService from '../services/tokenService.js';
 import Emitter from './emitEvents.ts/Emitter.js';
 
+interface OnlineUsers {
+  [Key: string]: string;
+}
+
 class WebSocketServer {
   private _io: Server;
+  private users: OnlineUsers = {};
 
   constructor(server: HttpServer) {
     this._io = new Server(server, {
@@ -27,18 +32,19 @@ class WebSocketServer {
     }
   }
 
-  disconnectEvent(socket: Socket) {
+  disconnectEvent(socket: Socket, userId: number) {
     socket.on('disconnect', () => {
+      delete this.users[userId];
       console.log(socket.id, 'left the chat');
     });
   }
 
   subscribeToEvents(io: Server, socket: Socket) {
-    this.disconnectEvent(socket);
     const userSessionParams = this.getUserSessionParams(socket);
+    this.disconnectEvent(socket, userSessionParams.userId);
     const emitter = new Emitter(io, socket);
     socket.join('1');
-    console.log(socket.id, 'подключен');
+    this.users[userSessionParams.userId] = socket.id;
     onEventsHandlers(socket, userSessionParams, emitter);
   }
 
@@ -50,7 +56,7 @@ class WebSocketServer {
 
   connection() {
     this._io.on('connection', socket => {
-      // this.checkAccessConnection(socket, socket.handshake.headers.cookie);
+      console.log(this.users);
       this.subscribeToEvents(this._io, socket);
     });
   }
