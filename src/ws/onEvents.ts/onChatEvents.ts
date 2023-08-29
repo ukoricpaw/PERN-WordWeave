@@ -23,7 +23,11 @@ export function onChatEventsHandlers(
     });
     socket.join(String(roomState.roomId));
     roomId = roomState.roomId;
+<<<<<<< Updated upstream
     const messages = chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
+=======
+    const messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 20, page: 1 });
+>>>>>>> Stashed changes
     emitter.emitEvent('joinToChatOnClientSide')(
       socket.id,
       userSessionParams.userId,
