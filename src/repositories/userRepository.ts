@@ -43,6 +43,16 @@ class UserRepository {
     return user as Promise<UserInstance & { getFriends: (params: SearchUserParams) => Promise<UserInstance[]> }>;
   }
 
+  async findUserByEmail(email: string) {
+    const userContact = await User.findOne({
+      where: { email },
+      attributes: {
+        exclude: ['password', 'createdAt', 'updatedAt', 'activationLink', 'isActivated'],
+      },
+    });
+    return userContact;
+  }
+
   async comparePassword(password: string, hashedPassword: string) {
     const compared = await bcrypt.compare(password, hashedPassword);
     if (!compared) {
