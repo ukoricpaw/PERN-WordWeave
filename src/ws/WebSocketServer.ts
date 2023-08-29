@@ -43,7 +43,6 @@ class WebSocketServer {
     const userSessionParams = this.getUserSessionParams(socket);
     this.disconnectEvent(socket, userSessionParams.userId);
     const emitter = new Emitter(io, socket);
-    socket.join('1');
     this.users[userSessionParams.userId] = socket.id;
     onEventsHandlers(io, socket, userSessionParams, emitter);
   }

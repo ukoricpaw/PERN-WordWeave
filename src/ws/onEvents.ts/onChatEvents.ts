@@ -23,7 +23,7 @@ export function onChatEventsHandlers(
     });
     socket.join(String(roomState.roomId));
     roomId = roomState.roomId;
-    const messages = chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
+    const messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
     emitter.emitEvent('joinToChatOnClientSide')(
       socket.id,
       userSessionParams.userId,

@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import { Room } from '../models/Room.js';
 import { Message } from '../models/Message.js';
+import ApiError from '../error/ApiError.js';
 
 class ChatRepository {
   async findRoomByContactIds({ user1Id, user2Id }: { user1Id: number; user2Id: number }) {
@@ -29,6 +30,13 @@ class ChatRepository {
   async findRoomById(roomId: number) {
     const room = await Room.findOne({ where: { id: roomId } });
     return room;
+  }
+
+  async findRoomIfIsEmptyThrowError(roomId: number) {
+    const room = await this.findRoomById(roomId);
+    if (!room) {
+      throw ApiError.badRequest('Чат не найден', null);
+    }
   }
 
   async createDialogRoom({ user1Id, user2Id }: { user1Id: number; user2Id: number }) {
