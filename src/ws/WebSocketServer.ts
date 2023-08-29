@@ -45,7 +45,7 @@ class WebSocketServer {
     const emitter = new Emitter(io, socket);
     socket.join('1');
     this.users[userSessionParams.userId] = socket.id;
-    onEventsHandlers(socket, userSessionParams, emitter);
+    onEventsHandlers(io, socket, userSessionParams, emitter);
   }
 
   getUserSessionParams(socket: Socket) {

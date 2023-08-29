@@ -16,13 +16,13 @@ class Emitter {
   }
 
   emitEvent(event: keyof EmittersEvents) {
-    return (roomId: number, userId: number, body: any, socketRender: boolean) => {
+    return (roomId: string, userId: number, body: any, socketRender: boolean) => {
       try {
         const emitEvent = emitEvents()[event];
         if (socketRender) {
-          this.io.in(String(roomId)).emit(emitEvent, { userId, data: body });
+          this.io.in(roomId).emit(emitEvent, { userId, data: body });
         } else {
-          this.socket.to(String(roomId)).emit(emitEvent, { userId, data: body });
+          this.socket.to(roomId).emit(emitEvent, { userId, data: body });
         }
       } catch (err) {
         this.emitError(err as MessageType);
