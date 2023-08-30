@@ -11,7 +11,9 @@ interface MessageAttributes {
   roomId: number;
 }
 
-interface MessageInstance extends Model<MessageAttributes, Optional<MessageAttributes, 'id'>>, MessageAttributes {
+export interface MessageInstance
+  extends Model<MessageAttributes, Optional<MessageAttributes, 'id'>>,
+    MessageAttributes {
   createdAt?: Date;
   updatedAt?: Date;
 }
