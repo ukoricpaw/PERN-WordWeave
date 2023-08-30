@@ -11,7 +11,7 @@ interface RoomAttributes {
   user2Id: number;
 }
 
-interface RoomInstance extends Model<RoomAttributes, Optional<RoomAttributes, 'id'>>, RoomAttributes {
+export interface RoomInstance extends Model<RoomAttributes, Optional<RoomAttributes, 'id'>>, RoomAttributes {
   createdAt?: Date;
   updatedAt?: Date;
 }
