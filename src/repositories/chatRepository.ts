@@ -71,19 +71,21 @@ class ChatRepository {
   }
 
   async getRoomAndRoomIdBySearchingRoom({ user1Id, user2Id }: { user1Id: number; user2Id: number }) {
+    let isNew: boolean = false;
     let room = await this.findRoomByContactIds({
       user1Id,
       user2Id,
     });
     let roomId: null | number = null;
     if (!room) {
+      isNew = true;
       room = await this.createDialogRoom({
         user1Id,
         user2Id,
       });
     }
     roomId = room.id;
-    return { roomId, room };
+    return { roomId, room, isNew };
   }
 
   async getAllRoomsById(userId: number) {

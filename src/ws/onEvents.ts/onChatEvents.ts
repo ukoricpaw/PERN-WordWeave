@@ -12,8 +12,6 @@ export function onChatEventsHandlers(
   userSessionParams: UserSessionParams,
   emitter: Emitter,
 ) {
-  let roomId: number | null = null;
-
   async function joinDialogChat(email: string) {
     const userContact = await userRepository.findUserByEmail(email);
     checkUserIfIsNullEmitErrorEvent(userContact, socket);
@@ -21,34 +19,37 @@ export function onChatEventsHandlers(
       user1Id: userSessionParams.userId,
       user2Id: (userContact as UserInstance).id,
     });
-    socket.join(String(roomState.roomId));
-    roomId = roomState.roomId;
+    if (roomState.isNew) {
+      socket.join(String(roomState.roomId));
+    }
     const messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
     emitter.emitEvent('joinToChatOnClientSide')(
       socket.id,
       userSessionParams.userId,
       {
-        room: roomState.room,
-        messages,
-        user: userContact,
+        room: roomState.isNew ? roomState.room : null,
+        messages: roomState.isNew ? null : messages,
+        user: roomState.isNew ? userContact : null,
       },
       true,
     );
   }
 
-  async function leaveDialogChat() {
-    if (!roomId) {
-      return;
-    }
-    socket.leave(String(roomId));
+  async function clearDialogChat(roomId: number) {
+    // console.log(roomId + 'hello');
     const count = await chatRepository.countOfRoomMessages(roomId);
     if (!count) {
-      const room = io.sockets.adapter.rooms.get(String(roomId));
-      if (room) {
-        if (room.size === 0) {
-          chatRepository.findRoomById(roomId).then(room => room?.destroy());
-        }
-      }
+      // const roomSockets = await io.in(String(roomId)).fetchSockets();
+      // console.log(roomSockets.length);
+      // if (!roomSockets.length) {
+      io.sockets.adapter.rooms.delete(String(roomId));
+      chatRepository.findRoomById(roomId).then(room => {
+        console.log('lolololololololol');
+        console.log('lolololololololol');
+        console.log('lolololololololol');
+        room?.destroy();
+      });
+      // }
     }
   }
 
@@ -58,8 +59,8 @@ export function onChatEventsHandlers(
       eventHandler: joinDialogChat,
     },
     {
-      eventName: 'chat:leaveDialogChat',
-      eventHandler: leaveDialogChat,
+      eventName: 'chat:clearDialogChat',
+      eventHandler: clearDialogChat,
     },
   ];
 }
