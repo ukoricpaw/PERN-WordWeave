@@ -57,6 +57,11 @@ class ChatRepository {
     return room;
   }
 
+  async getCountOfMessages(roomId: number) {
+    const count = await Message.count({ where: { roomId } });
+    return count;
+  }
+
   async findMessages({ roomId, limit, page }: { roomId: number; limit: number; page: number }) {
     const offset = limit * page - limit;
     const messages = await Message.findAndCountAll({
@@ -83,6 +88,11 @@ class ChatRepository {
         user1Id,
         user2Id,
       });
+    } else {
+      const count = await this.getCountOfMessages(room.id);
+      if (!count) {
+        isNew = true;
+      }
     }
     roomId = room.id;
     return { roomId, room, isNew };
