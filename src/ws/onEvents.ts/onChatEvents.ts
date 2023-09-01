@@ -5,6 +5,7 @@ import { UserInstance } from '../../models/User.js';
 import { checkUserIfIsNullEmitErrorEvent } from '../../utils/checkUserIfIsNullEmitErrorEvent.js';
 import chatRepository from '../../repositories/chatRepository.js';
 import userRepository from '../../repositories/userRepository.js';
+import { MessageInstance } from '../../models/Message.js';
 
 export function onChatEventsHandlers(
   io: Server,
@@ -13,6 +14,7 @@ export function onChatEventsHandlers(
   emitter: Emitter,
 ) {
   async function joinDialogChat(email: string) {
+    let messages: { count: number; rows: MessageInstance[] } | null = null;
     const userContact = await userRepository.findUserByEmail(email);
     checkUserIfIsNullEmitErrorEvent(userContact, socket);
     const roomState = await chatRepository.getRoomAndRoomIdBySearchingRoom({
@@ -21,8 +23,9 @@ export function onChatEventsHandlers(
     });
     if (roomState.isNew) {
       socket.join(String(roomState.roomId));
+    } else {
+      messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
     }
-    const messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
     emitter.emitEvent('joinToChatOnClientSide')(
       socket.id,
       userSessionParams.userId,
@@ -44,9 +47,6 @@ export function onChatEventsHandlers(
       // if (!roomSockets.length) {
       io.sockets.adapter.rooms.delete(String(roomId));
       chatRepository.findRoomById(roomId).then(room => {
-        console.log('lolololololololol');
-        console.log('lolololololololol');
-        console.log('lolololololololol');
         room?.destroy();
       });
       // }
