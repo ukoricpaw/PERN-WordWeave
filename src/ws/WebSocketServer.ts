@@ -3,6 +3,8 @@ import { Server as HttpServer, IncomingHttpHeaders } from 'http';
 import { onEventsHandlers } from './onEvents.ts/index.js';
 import tokenService from '../services/tokenService.js';
 import Emitter from './emitEvents.ts/Emitter.js';
+import { UserSessionParams } from '../types/userTypes.js';
+import chatRepository from '../repositories/chatRepository.js';
 
 interface OnlineUsers {
   [Key: string]: string;
@@ -43,9 +45,17 @@ class WebSocketServer {
     const userSessionParams = this.getUserSessionParams(socket);
     this.disconnectEvent(socket, userSessionParams.userId);
     const emitter = new Emitter(io, socket);
-    socket.join('1');
     this.users[userSessionParams.userId] = socket.id;
     onEventsHandlers(io, socket, userSessionParams, emitter);
+    this.joinToRooms(userSessionParams, socket);
+  }
+
+  async joinToRooms(userSessionParams: UserSessionParams, socket: Socket) {
+    const rooms = await chatRepository.getAllRoomsById(userSessionParams.userId);
+    rooms[0].rows.forEach(room => socket.join(String(room.id)));
+    rooms[1].rows.forEach(room => socket.join(String(room.id)));
+    const roomsWithOtherInfo = await chatRepository.getRoomsWithLastMessageAndUserInfo(rooms, userSessionParams);
+    socket.emit('chat:provide-all-rooms', roomsWithOtherInfo);
   }
 
   getUserSessionParams(socket: Socket) {

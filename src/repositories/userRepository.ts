@@ -1,6 +1,7 @@
 import ApiError from '../error/ApiError.js';
+import { RoomInstance } from '../models/Room.js';
 import { User, UserInstance } from '../models/User.js';
-import { CreateNewUserType, SearchUserParams } from '../types/userTypes.js';
+import { CreateNewUserType, SearchUserParams, userExcludeAttributes } from '../types/userTypes.js';
 import bcrypt from 'bcrypt';
 
 class UserRepository {
@@ -65,6 +66,16 @@ class UserRepository {
     if (!user) {
       throw ApiError.badRequest('Ошибка запроса', null);
     }
+    return user;
+  }
+
+  async findUserByRoomsIds(userId: number, room: RoomInstance) {
+    const user = await User.findOne({
+      where: {
+        id: room.user1Id === userId ? room.user2Id : room.user1Id,
+      },
+      attributes: userExcludeAttributes,
+    });
     return user;
   }
 }

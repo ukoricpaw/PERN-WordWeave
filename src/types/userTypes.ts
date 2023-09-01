@@ -27,3 +27,7 @@ export type SearchUserParams = {
 export type UserSessionParams = {
   userId: number;
 };
+
+export const userExcludeAttributes = {
+  exclude: ['password', 'isActivated', 'activationLink', 'createdAt', 'updatedAt'],
+};
