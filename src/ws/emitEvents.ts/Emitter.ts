@@ -12,7 +12,11 @@ class Emitter {
   }
 
   emitError(err: MessageType) {
-    this.socket.emit('error:emitErrorMessage', err.message ?? 'Произошла ошибка');
+    try {
+      this.socket.emit('error:emitErrorMessage', err.message ?? 'Произошла ошибка');
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   emitEvent(event: keyof EmittersEvents) {
