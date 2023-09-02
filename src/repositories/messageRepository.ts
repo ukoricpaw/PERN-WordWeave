@@ -5,7 +5,7 @@ import chatRepository from './chatRepository.js';
 
 class MessageRepository {
   async createMessage(userId: number, roomId: number, message: string) {
-    await chatRepository.findRoomById(roomId);
+    await chatRepository.findRoomIfIsEmptyThrowError(roomId);
     const newMessage = await Message.create({
       text: message,
       isChanged: false,
