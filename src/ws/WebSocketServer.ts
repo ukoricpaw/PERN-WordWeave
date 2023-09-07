@@ -6,7 +6,7 @@ import Emitter from './emitEvents.ts/Emitter.js';
 import { UserSessionParams } from '../types/userTypes.js';
 import chatRepository from '../repositories/chatRepository.js';
 
-interface OnlineUsers {
+export interface OnlineUsers {
   [Key: string]: string;
 }
 
@@ -46,7 +46,7 @@ class WebSocketServer {
     this.disconnectEvent(socket, userSessionParams.userId);
     const emitter = new Emitter(io, socket);
     this.users[userSessionParams.userId] = socket.id;
-    onEventsHandlers(io, socket, userSessionParams, emitter);
+    onEventsHandlers(io, socket, userSessionParams, emitter, this.users);
     this.joinToRooms(userSessionParams, socket);
   }
 

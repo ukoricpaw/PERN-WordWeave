@@ -40,7 +40,12 @@ class UserRepository {
   }
 
   async findUserById(id: number) {
-    const user = User.findOne({ where: { id } });
+    const user = User.findOne({
+      where: { id },
+      attributes: {
+        exclude: ['password', 'createdAt', 'updatedAt', 'activationLink', 'isActivated'],
+      },
+    });
     return user as Promise<UserInstance & { getFriends: (params: SearchUserParams) => Promise<UserInstance[]> }>;
   }
 

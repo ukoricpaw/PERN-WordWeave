@@ -5,6 +5,8 @@ class UserDto {
   public email: string;
   public avatar: string | null;
   public isActivated: boolean;
+
+
   constructor(user: UserInstance) {
     this.id = user.id;
     this.email = user.email;
