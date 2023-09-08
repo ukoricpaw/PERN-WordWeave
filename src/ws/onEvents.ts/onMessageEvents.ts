@@ -31,16 +31,16 @@ export function onMessageEventsHandlers(
           userRepository.findUserById(userReceiverId),
           userRepository.findUserById(userId),
         ]);
+        roomResponseForSender = {
+          room,
+          lastMessage: { text: message },
+          user: userReceiverInfo,
+        };
         if (onlineUsers[String(userReceiverId)]) {
           roomResponseForReceiver = {
             room,
             lastMessage: { text: message },
             user: userSenderInfo,
-          };
-          roomResponseForSender = {
-            room,
-            lastMessage: { text: message },
-            user: userReceiverInfo,
           };
           emitter.emitEvent('provideMessageToRoom')(
             onlineUsers[String(userReceiverId)],
@@ -48,8 +48,8 @@ export function onMessageEventsHandlers(
             roomResponseForReceiver,
             true,
           );
-          emitter.emitEvent('provideMessageToRoom')(onlineUsers[String(userId)], userId, roomResponseForSender, true);
         }
+        emitter.emitEvent('provideMessageToRoom')(onlineUsers[String(userId)], userId, roomResponseForSender, true);
       }
     }
   }
