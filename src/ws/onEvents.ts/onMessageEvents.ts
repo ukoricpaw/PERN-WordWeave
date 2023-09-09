@@ -4,8 +4,10 @@ import Emitter from '../emitEvents.ts/Emitter.js';
 import messageRepository from '../../repositories/messageRepository.js';
 import { OnlineUsers } from '../WebSocketServer.js';
 import chatRepository from '../../repositories/chatRepository.js';
-import { RoomResponse, RoomWithLastMessage } from '../../types/roomTypes.js';
+import { RoomWithLastMessage } from '../../types/roomTypes.js';
 import userRepository from '../../repositories/userRepository.js';
+import { MessageInstance } from '../../models/Message.js';
+import { UserInstance } from '../../models/User.js';
 
 export function onMessageEventsHandlers(
   socket: Socket,
@@ -16,15 +18,15 @@ export function onMessageEventsHandlers(
   async function getSentMessage({ message, roomId }: { message: string; roomId: number }) {
     const newMessage = await messageRepository.createMessage(userSessionParams.userId, roomId, message);
     emitter.emitEvent('provideMessage')(String(roomId), userSessionParams.userId, newMessage, true);
-    await provideMessageToRoom(roomId, userSessionParams.userId, message);
+    await provideMessageToRoom(roomId, userSessionParams.userId, newMessage);
   }
 
-  async function provideMessageToRoom(roomId: number, userId: number, message: string) {
+  async function provideMessageToRoom(roomId: number, userId: number, message: MessageInstance) {
     const room = await chatRepository.findRoomById(roomId);
     if (room) {
       if (room.isGroup) {
       } else {
-        let roomResponseForReceiver,
+        let roomResponseForReceiver: RoomWithLastMessage | null,
           roomResponseForSender: RoomWithLastMessage | null = null;
         const userReceiverId = room.user1Id == userId ? room.user2Id : room.user1Id;
         const [userReceiverInfo, userSenderInfo] = await Promise.all([
@@ -33,13 +35,13 @@ export function onMessageEventsHandlers(
         ]);
         roomResponseForSender = {
           room,
-          lastMessage: { text: message },
+          lastMessage: { ...message.dataValues, user: { id: userId } as UserInstance },
           user: userReceiverInfo,
         };
         if (onlineUsers[String(userReceiverId)]) {
           roomResponseForReceiver = {
             room,
-            lastMessage: { text: message },
+            lastMessage: { ...message.dataValues, user: { id: userId } as UserInstance },
             user: userSenderInfo,
           };
           emitter.emitEvent('provideMessageToRoom')(

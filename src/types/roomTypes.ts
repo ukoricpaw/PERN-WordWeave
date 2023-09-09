@@ -16,7 +16,5 @@ export interface RoomResponse {
 }
 
 export interface RoomWithLastMessage extends Omit<RoomResponse, 'messages'> {
-  lastMessage: {
-    text: string | null;
-  };
+  lastMessage: { user: UserInstance };
 }
