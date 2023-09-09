@@ -19,7 +19,6 @@ export function onMessageEventsHandlers(
 ) {
   async function getSentMessage({ message, roomId }: { message: string; roomId: number }) {
     const newMessage = await messageRepository.createMessage(userSessionParams.userId, roomId, message);
-    emitter.emitEvent('provideMessage')(String(roomId), userSessionParams.userId, newMessage, true);
     await provideMessageToRoom(roomId, userSessionParams.userId, newMessage);
   }
 
