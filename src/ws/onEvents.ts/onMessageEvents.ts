@@ -9,6 +9,8 @@ import userRepository from '../../repositories/userRepository.js';
 import { MessageInstance } from '../../models/Message.js';
 import { UserInstance } from '../../models/User.js';
 
+import { RoomInstance } from '../../models/Room.js';
+
 export function onMessageEventsHandlers(
   socket: Socket,
   userSessionParams: UserSessionParams,
@@ -26,34 +28,46 @@ export function onMessageEventsHandlers(
     if (room) {
       if (room.isGroup) {
       } else {
-        let roomResponseForReceiver: RoomWithLastMessage | null,
-          roomResponseForSender: RoomWithLastMessage | null = null;
-        const userReceiverId = room.user1Id == userId ? room.user2Id : room.user1Id;
-        const [userReceiverInfo, userSenderInfo] = await Promise.all([
-          userRepository.findUserById(userReceiverId),
-          userRepository.findUserById(userId),
-        ]);
-        roomResponseForSender = {
-          room,
-          lastMessage: { ...message.dataValues, user: { id: userId } as UserInstance },
-          user: userReceiverInfo,
-        };
-        if (onlineUsers[String(userReceiverId)]) {
-          roomResponseForReceiver = {
-            room,
-            lastMessage: { ...message.dataValues, user: { id: userId } as UserInstance },
-            user: userSenderInfo,
-          };
-          emitter.emitEvent('provideMessageToRoom')(
-            onlineUsers[String(userReceiverId)],
-            userId,
-            roomResponseForReceiver,
-            true,
-          );
-        }
-        emitter.emitEvent('provideMessageToRoom')(onlineUsers[String(userId)], userId, roomResponseForSender, true);
+        await sendMessagesToSenderAndReceiver({ room, userId, message });
       }
     }
+  }
+
+  async function sendMessagesToSenderAndReceiver({
+    room,
+    userId,
+    message,
+  }: {
+    room: RoomInstance;
+    userId: number;
+    message: MessageInstance;
+  }) {
+    let roomResponseForReceiver: RoomWithLastMessage | null,
+      roomResponseForSender: RoomWithLastMessage | null = null;
+    const userReceiverId = room.user1Id == userId ? room.user2Id : room.user1Id;
+    const [userReceiverInfo, userSenderInfo] = await Promise.all([
+      userRepository.findUserById(userReceiverId),
+      userRepository.findUserById(userId),
+    ]);
+    roomResponseForSender = {
+      room,
+      lastMessage: { ...message.dataValues, user: { id: userId } as UserInstance },
+      user: userReceiverInfo,
+    };
+    if (onlineUsers[String(userReceiverId)]) {
+      roomResponseForReceiver = {
+        room,
+        lastMessage: { ...message.dataValues, user: { id: userId } as UserInstance },
+        user: userSenderInfo,
+      };
+      emitter.emitEvent('provideMessageToRoom')(
+        onlineUsers[String(userReceiverId)],
+        userId,
+        roomResponseForReceiver,
+        true,
+      );
+    }
+    emitter.emitEvent('provideMessageToRoom')(onlineUsers[String(userId)], userId, roomResponseForSender, true);
   }
 
   return [
