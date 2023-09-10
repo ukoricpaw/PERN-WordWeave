@@ -66,7 +66,6 @@ class WebSocketServer {
 
   connection() {
     this._io.on('connection', socket => {
-      console.log(this.users);
       this.subscribeToEvents(this._io, socket);
     });
   }

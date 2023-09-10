@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { UserSessionParams } from '../../types/userTypes.js';
+import { UserSessionParams, UserType } from '../../types/userTypes.js';
 import Emitter from '../emitEvents.ts/Emitter.js';
 import { UserInstance } from '../../models/User.js';
 import { checkUserIfIsNullEmitErrorEvent } from '../../utils/checkUserIfIsNullEmitErrorEvent.js';
@@ -53,6 +53,19 @@ export function onChatEventsHandlers(
     }
   }
 
+  function userIsTypingMessage({ roomId, userData }: { roomId: number; userData: UserType }) {
+    emitter.emitEvent('userIsTypingMessageToTheFullRoom')(String(roomId), userData.id, { roomId, userData }, false);
+  }
+
+  function userStoppingToTypeMessage({ roomId, userData }: { roomId: number; userData: UserType }) {
+    emitter.emitEvent('userIsStoppingToTypeMessageToTheFullRoom')(
+      String(roomId),
+      userData.id,
+      { roomId, userData },
+      false,
+    );
+  }
+
   return [
     {
       eventName: 'chat:joinDialogChat',
@@ -61,6 +74,14 @@ export function onChatEventsHandlers(
     {
       eventName: 'chat:clearDialogChat',
       eventHandler: clearDialogChat,
+    },
+    {
+      eventName: 'chat:userTypingMessage',
+      eventHandler: userIsTypingMessage,
+    },
+    {
+      eventName: 'chat:userStoppingToTypeMessage',
+      eventHandler: userStoppingToTypeMessage,
     },
   ];
 }
