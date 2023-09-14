@@ -21,11 +21,11 @@ export function onChatEventsHandlers(
       user1Id: userSessionParams.userId,
       user2Id: (userContact as UserInstance).id,
     });
-    if (roomState.isNew) {
-      socket.join(String(roomState.roomId));
-    } else {
+    if (!roomState.isNew) {
       messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
-    }
+    } // } else {
+    socket.join(String(roomState.roomId));
+    // }
     emitter.emitEvent('joinToChatOnClientSide')(
       socket.id,
       userSessionParams.userId,
