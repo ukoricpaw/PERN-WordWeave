@@ -22,10 +22,9 @@ export function onChatEventsHandlers(
       user2Id: (userContact as UserInstance).id,
     });
     if (!roomState.isNew) {
-      messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 8, page: 1 });
-    } // } else {
+      messages = await chatRepository.findMessages({ roomId: roomState.roomId, limit: 20, page: 1 });
+    }
     socket.join(String(roomState.roomId));
-    // }
     emitter.emitEvent('joinToChatOnClientSide')(
       socket.id,
       userSessionParams.userId,
